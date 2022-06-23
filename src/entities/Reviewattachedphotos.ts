@@ -23,8 +23,8 @@ export class Reviewattachedphotos {
   @Column('varchar', { name: 'attached_photo_id', length: 36 })
   attachedPhotoId: string;
 
-  @DeleteDateColumn({ name: 'deleted_at' })
-  deletedAt: Date | null;
+  // @DeleteDateColumn({ name: 'deleted_at' })
+  // deletedAt: Date | null;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

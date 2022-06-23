@@ -32,11 +32,18 @@ export class ReviewsService {
     if (countPlaceReview === 0) {
       point += 1;
     }
-    if (eventRequestData.attachedPhotoIds.length !== 0) {
+    if (!eventRequestData.attachedPhotoIds.length) {
       // 배열 is empty 사용
       point += 1;
     }
     await this.reviewsRepository.insert(eventRequestData);
+    const photos = eventRequestData.attachedPhotoIds.map((id) => {
+      return {
+        reviewId: eventRequestData.reviewId,
+        attachedPhotoId: id,
+      };
+    });
+    await this.reviewAttachedPhotosRepository.insert(photos);
     console.log('point: ', point);
     await this.usersService.updateUserPoint(eventRequestData.userId, point);
 
@@ -51,6 +58,36 @@ export class ReviewsService {
   }
 
   async modReview(eventRequestData) {
+    let point = 0;
+    const reviewPhotos = await this.reviewAttachedPhotosRepository.count({
+      where: { reviewId: eventRequestData.reviewId },
+    });
+    if (reviewPhotos === 0 && eventRequestData.attachedPhotoIds.length) {
+      point += 1;
+    }
+    if (reviewPhotos !== 0 && !eventRequestData.attachedPhotoIds.length) {
+      point -= 1;
+    }
+
+    const review = await this.reviewsRepository.findOne({
+      where: { reviewId: eventRequestData.reviewId },
+      join: {
+        alias: 'reviews',
+        leftJoinAndSelect: {
+          reviewattachedphotos: 'reviews.reviewattachedphotos',
+        },
+      },
+    });
+
+    const requestPhotos = eventRequestData.attachedPhotoIds;
+    review.reviewattachedphotos = review.reviewattachedphotos.filter((row) =>
+      requestPhotos.includes(row.attachedPhotoId),
+    );
+    // await this.reviewsRepository.save(review);
+
+    return review;
+
+    await this.usersService.updateUserPoint(eventRequestData.userId, point);
     return `This action returns a #review`;
   }
 

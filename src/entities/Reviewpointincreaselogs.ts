@@ -4,18 +4,20 @@ import {
   DeleteDateColumn,
   UpdateDateColumn,
   Entity,
+  Index,
 } from 'typeorm';
 
+@Index('user_id', ['userId'], {})
 @Entity('reviewpointincreaselogs', { schema: 'triple_homework' })
 export class Reviewpointincreaselogs {
-  @Column('varchar', { primary: true, name: 'user_id', length: 36 })
+  @Column('varchar', { primary: true, name: 'review_id', length: 36 })
+  reviewId: string;
+
+  @Column('varchar', { name: 'user_id', length: 36 })
   userId: string;
 
   @Column('int', { name: 'point_increase' })
   pointIncrease: number;
-
-  @Column('varchar', { name: 'review_id', length: 36 })
-  reviewId: string;
 
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date | null;

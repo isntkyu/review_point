@@ -34,13 +34,14 @@ primary key (user_id)
 );
 
 create table ReviewPointIncreaseLogs (
+review_id varchar(36) not null,
 user_id varchar(36) not null,
 point_increase int not null,
-review_id varchar(36) not null,
 deleted_at DATETIME default null,
 created_at DATETIME default current_timestamp() not null,
 updated_at DATETIME default current_timestamp() not null,
-primary key (user_id)
+index (user_id)
+primary key (review_id)
 );
 
 ---
@@ -60,3 +61,10 @@ synchronize: true, // 코드 -> 디비로 싱크
 - create, update, delete 픽타입 중복
 
 - \*\*\*DateColumn 데코레이터쓰면 왜 실제 컬럼을 createdAt -> created_at 으로 안바꿔줌?
+
+InternalServerErrorException
+
+사진 테이블도 소프트딜리트해야되나.
+필요없을듯
+
+PrimaryGeneratedColumn 필요한가
