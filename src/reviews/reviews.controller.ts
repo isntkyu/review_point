@@ -16,15 +16,15 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  async postReview(eventRequstData) {
-    const requestMethod = eventRequstData.action;
+  async postReview(eventRequestData) {
+    const requestMethod = eventRequestData.action;
     switch (requestMethod) {
       case 'ADD':
-        return await this.reviewsService.addReview();
+        return await this.reviewsService.addReview(eventRequestData);
       case 'MOD':
-        return await this.reviewsService.modReview();
+        return await this.reviewsService.modReview(eventRequestData);
       case 'DELETE':
-        return await this.reviewsService.deleteReview();
+        return await this.reviewsService.deleteReview(eventRequestData);
       default:
         throw new BadRequestException();
     }

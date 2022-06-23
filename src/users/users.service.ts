@@ -23,6 +23,14 @@ export class UsersService {
     return await this.usersRepository.findBy({});
   }
 
+  async updateUserPoint(userId: string, pointIncrease: number) {
+    const user = await this.usersRepository.findOne({
+      where: { userId: userId },
+    });
+    user.point += pointIncrease;
+    return await this.usersRepository.save(user);
+  }
+
   // update(id: number, updateUserDto: UpdateUserDto) {
   //   return `This action updates a #${id} user`;
   // }
