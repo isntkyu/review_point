@@ -56,3 +56,7 @@ synchronize: true, // 코드 -> 디비로 싱크
   - 비동기로 .env 가져오고 연결
 
 - 404 처리 인터셉터
+
+- create, update, delete 픽타입 중복
+
+- \*\*\*DateColumn 데코레이터쓰면 왜 실제 컬럼을 createdAt -> created_at 으로 안바꿔줌?
