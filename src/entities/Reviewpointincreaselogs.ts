@@ -5,12 +5,16 @@ import {
   UpdateDateColumn,
   Entity,
   Index,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Index('user_id', ['userId'], {})
 @Entity('reviewpointincreaselogs', { schema: 'triple_homework' })
 export class Reviewpointincreaselogs {
-  @Column('varchar', { primary: true, name: 'review_id', length: 36 })
+  @PrimaryGeneratedColumn({ type: 'int', name: 'id', unsigned: true })
+  id: number;
+
+  @Column('varchar', { name: 'review_id', length: 36 })
   reviewId: string;
 
   @Column('varchar', { name: 'user_id', length: 36 })

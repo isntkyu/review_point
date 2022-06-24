@@ -24,11 +24,11 @@ export class UsersService {
   }
 
   async updateUserPoint(userId: string, pointIncrease: number) {
-    const user = await this.usersRepository.findOne({
-      where: { userId: userId },
-    });
-    user.point += pointIncrease;
-    return await this.usersRepository.save(user);
+    return await this.usersRepository.increment(
+      { userId: userId },
+      'point',
+      pointIncrease,
+    );
   }
 
   // update(id: number, updateUserDto: UpdateUserDto) {

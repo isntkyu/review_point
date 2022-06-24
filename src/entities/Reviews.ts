@@ -36,6 +36,9 @@ export class Reviews {
   @OneToMany(
     () => Reviewattachedphotos,
     (reviewattachedphotos) => reviewattachedphotos.review,
+    {
+      cascade: true,
+    },
   )
   reviewattachedphotos: Reviewattachedphotos[];
 }

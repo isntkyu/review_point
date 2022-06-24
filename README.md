@@ -68,3 +68,11 @@ InternalServerErrorException
 필요없을듯
 
 PrimaryGeneratedColumn 필요한가
+
+사진테이블에 엄데이트문이 필요한가
+
+0점일때 삭제
+
+포토아이디가 겹칠수잇나? (개념은 가능)
+
+소프트딜리트의 cascade 직접구현
