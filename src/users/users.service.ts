@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Users } from 'src/entities/Users';
+import { Users } from '../entities/Users';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Repository } from 'typeorm';
+import { Repository, EntityNotFoundError, QueryFailedError } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -15,20 +15,48 @@ export class UsersService {
   //   return 'This action adds a new user';
   // }
 
-  async findAll() {
-    return await this.usersRepository.find({ where: {} });
-  }
+  // async findAll() {
+  //   return await this.usersRepository.find({ where: {} });
+  // }
 
-  async findOne(id: string) {
-    return await this.usersRepository.findBy({});
+  async findOne(userId: string): Promise<Users> {
+    try {
+      const user = await this.usersRepository.findOneBy({ userId: userId });
+      if (!user) {
+        throw new EntityNotFoundError(Users, userId);
+      }
+      return user;
+    } catch (error) {
+      return error;
+    }
   }
 
   async updateUserPoint(userId: string, pointIncrease: number) {
-    return await this.usersRepository.increment(
-      { userId: userId },
-      'point',
-      pointIncrease,
-    );
+    try {
+      // console.log(
+      //   '--------------------------',
+      //   await this.usersRepository.increment(
+      //     { userId: userId },
+      //     'point',
+      //     -12356,
+      //   ),
+      // );
+      const returned = await this.usersRepository.increment(
+        { userId: userId },
+        'point',
+        pointIncrease,
+      );
+      // console.log('returned.affected', returned.affected);
+      if (returned.affected === 0) {
+        throw new EntityNotFoundError(Users, userId);
+      }
+      return returned;
+    } catch (error) {
+      if (error.code === 'ER_DATA_OUT_OF_RANGE') {
+        return new Error('point cannot be negative');
+      }
+      return error;
+    }
   }
 
   // update(id: number, updateUserDto: UpdateUserDto) {

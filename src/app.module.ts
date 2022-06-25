@@ -18,7 +18,7 @@ import { AppService } from './app.service';
       entities: [__dirname + '/entities/*.{js,ts}'],
       // entities: [Users],
       // autoLoadEntities: true,
-      synchronize: true, // 코드 -> 디비로 싱크
+      synchronize: false, // 코드 -> 디비로 싱크
       logging: true, // 개발시
       keepConnectionAlive: true, // 서버 재시작시 커넥션 안끊김
     }),

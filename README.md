@@ -76,3 +76,23 @@ PrimaryGeneratedColumn 필요한가
 포토아이디가 겹칠수잇나? (개념은 가능)
 
 소프트딜리트의 cascade 직접구현
+
+logger
+
+---
+
+- TEST
+
+  - user
+
+    - find user
+    - 포인트 업뎃
+      - 포인트 0점인데 마이너스할 경우 에러
+      - 포인트 업뎃 후 확인
+
+  - app
+
+    - /events 존재
+    - /events 404 뱉는지
+
+  - review
