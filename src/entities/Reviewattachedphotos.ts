@@ -29,8 +29,8 @@ export class Reviewattachedphotos {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  // @UpdateDateColumn({ name: 'updated_at' })
-  // updatedAt: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 
   @ManyToOne(() => Reviews, (reviews) => reviews.reviewattachedphotos, {
     onDelete: 'CASCADE',

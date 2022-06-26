@@ -18,7 +18,6 @@ export class ReviewsService {
     private reviewAttachedPhotosRepository: Repository<Reviewattachedphotos>,
     @InjectRepository(Reviewpointincreaselogs)
     private reviewPointIncreaseLogsRepository: Repository<Reviewpointincreaselogs>,
-    private placesService: PlacesService,
     private usersService: UsersService,
     private dataSource: DataSource,
   ) {}
@@ -190,19 +189,22 @@ export class ReviewsService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
     try {
+      // 리뷰 삭제
       await this.reviewsRepository.softDelete(eventRequestData.reviewId);
+      // 사진 삭제
       const returned = await this.reviewAttachedPhotosRepository.find({
         where: {
           reviewId: eventRequestData.reviewId,
         },
       });
       await this.reviewAttachedPhotosRepository.softRemove(returned);
+      // 포인트 업뎃
+      await this.usersService.updateUserPoint(eventRequestData.userId, point);
       const logs = {
         userId: eventRequestData.userId,
         reviewId: eventRequestData.reviewId,
         pointIncrease: point,
       };
-      await this.usersService.updateUserPoint(eventRequestData.userId, point);
       await this.reviewPointIncreaseLogsRepository.insert(logs);
       await queryRunner.commitTransaction();
     } catch (error) {
