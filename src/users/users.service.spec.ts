@@ -171,7 +171,6 @@ describe('UsersService', () => {
       );
 
       expect(result).toEqual(new Error('point cannot be negative'));
-      //Error: BIGINT UNSIGNED value is out of range
     });
   });
 });

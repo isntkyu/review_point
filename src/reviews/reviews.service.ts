@@ -1,16 +1,19 @@
 import { Reviewpointincreaselogs } from './../entities/Reviewpointincreaselogs';
 import { Reviewattachedphotos } from './../entities/Reviewattachedphotos';
 import { UsersService } from './../users/users.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Reviews } from '../entities/Reviews';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { PlacesService } from 'src/places/places.service';
+import { Users } from 'src/entities/Users';
 
 @Injectable()
 export class ReviewsService {
+  private static readonly logger = new Logger(ReviewsService.name);
+
   constructor(
     @InjectRepository(Reviews)
     private reviewsRepository: Repository<Reviews>,
@@ -36,6 +39,7 @@ export class ReviewsService {
     });
 
     if (existReview) {
+      console.log(existReview);
       return '이미 리뷰가 존재한다.';
     }
     // 4. 포인트 계산
@@ -86,11 +90,12 @@ export class ReviewsService {
       console.log(error);
       queryRunner.rollbackTransaction();
     } finally {
+      const user = await this.usersService.findOne(eventRequestData.userId);
       await queryRunner.release();
+      return user;
     }
 
     // 결과 포인트 리턴
-    return await this.usersService.findOne(eventRequestData.userId);
   }
 
   async modReview(eventRequestData) {
@@ -158,11 +163,10 @@ export class ReviewsService {
       console.log(error);
       queryRunner.rollbackTransaction();
     } finally {
+      const user = await this.usersService.findOne(eventRequestData.userId);
       await queryRunner.release();
+      return user;
     }
-
-    // 결과 포인트 확인.
-    return await this.usersService.findOne(eventRequestData.userId);
   }
 
   async deleteReview(eventRequestData) {
@@ -211,10 +215,9 @@ export class ReviewsService {
       console.log(error);
       queryRunner.rollbackTransaction();
     } finally {
+      const user = await this.usersService.findOne(eventRequestData.userId);
       await queryRunner.release();
+      return user;
     }
-
-    // 결과 포인트 리턴
-    return await this.usersService.findOne(eventRequestData.userId);
   }
 }
