@@ -79,6 +79,8 @@ PrimaryGeneratedColumn 필요한가
 
 logger
 
+user e2e
+
 ---
 
 - TEST

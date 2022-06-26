@@ -55,7 +55,7 @@ export class ReviewsService {
     };
     await this.reviewPointIncreaseLogsRepository.insert(logs);
 
-    return `This action returns a #review`;
+    return await this.usersService.findOne(eventRequestData.userId);
   }
 
   async modReview(eventRequestData) {
@@ -112,7 +112,7 @@ export class ReviewsService {
       await queryRunner.release();
     }
 
-    return `This action returns a #review`;
+    return await this.usersService.findOne(eventRequestData.userId);
   }
 
   async deleteReview(eventRequestData) {
@@ -149,6 +149,6 @@ export class ReviewsService {
     };
     await this.reviewPointIncreaseLogsRepository.insert(logs);
 
-    return `This action updates a # review`;
+    return await this.usersService.findOne(eventRequestData.userId);
   }
 }
