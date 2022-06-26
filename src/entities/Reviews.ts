@@ -6,8 +6,11 @@ import {
   Entity,
   Index,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Reviewattachedphotos } from './Reviewattachedphotos';
+import { Places } from './Places';
 
 @Index('place_id', ['placeId'], {})
 @Entity('reviews', { schema: 'triple_homework' })
@@ -41,4 +44,11 @@ export class Reviews {
     },
   )
   reviewattachedphotos: Reviewattachedphotos[];
+
+  @ManyToOne(() => Places, (places) => places.reviews, {
+    onDelete: 'CASCADE',
+    onUpdate: 'NO ACTION',
+  })
+  @JoinColumn([{ name: 'place_id', referencedColumnName: 'placeId' }])
+  place: Places;
 }

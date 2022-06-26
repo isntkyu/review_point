@@ -7,6 +7,7 @@ import { ReviewsController } from './reviews.controller';
 import { Reviews } from '../entities/Reviews';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersService } from 'src/users/users.service';
+import { PlacesModule } from 'src/places/places.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UsersService } from 'src/users/users.service';
       Reviewpointincreaselogs,
     ]),
     UsersModule,
+    PlacesModule,
   ],
   controllers: [ReviewsController],
   providers: [ReviewsService, ReviewsController],
