@@ -9,7 +9,11 @@ export default class CreateUsers implements Seeder {
       .createQueryBuilder()
       .insert()
       .into(Users)
-      .values([{ userId: '3ede0ef2-92b7-4817-a5f3-0c575361f745' }])
+      .values([
+        { userId: '3ede0ef2-92b7-4817-a5f3-0c575361f745' },
+        { userId: '92b7-4817-a5f3-0c575361f745-3ede0ef2' },
+        { userId: '3ede0ef2-92b7-4817-a5f3-0c575361f777' },
+      ])
       .execute();
 
     await datasource
@@ -18,6 +22,8 @@ export default class CreateUsers implements Seeder {
       .into(Places)
       .values([
         { placeId: '2e4baf1c-5acb-4efb-a1af-eddada31b00f', name: 'suwon' },
+        { placeId: '2e4baf1c-5acb-4efb-a1af-eddada31b00a', name: 'seoul' },
+        { placeId: '2e4baf1c-5acb-4efb-a1af-eddada31b00b', name: 'busan' },
       ])
       .execute();
   }

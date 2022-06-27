@@ -7,7 +7,6 @@ import {
   Index,
   OneToMany,
 } from 'typeorm';
-import { Reviewattachedphotos } from './Reviewattachedphotos';
 import { Reviews } from './Reviews';
 
 @Index('place_id', ['placeId'], {})

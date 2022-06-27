@@ -7,16 +7,12 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Reviews } from './Reviews';
 
 @Index('review_id', ['reviewId'], {})
 @Entity('reviewattachedphotos', { schema: 'triple_homework' })
 export class Reviewattachedphotos {
-  // @PrimaryGeneratedColumn({ type: 'int', name: 'id', unsigned: true })
-  // id: number;
-
   @Column('varchar', { name: 'review_id', length: 36 })
   reviewId: string;
 

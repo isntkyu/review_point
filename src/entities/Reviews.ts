@@ -8,7 +8,6 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
-  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Reviewattachedphotos } from './Reviewattachedphotos';
 import { Places } from './Places';

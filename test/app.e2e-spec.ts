@@ -15,7 +15,6 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  // 타입 리뷰아니면 404. 액션 없으면 400
   it('/events (POST)', async () => {
     const response = await request(app.getHttpServer()).post('/events').send({
       type: 'REVIEW',

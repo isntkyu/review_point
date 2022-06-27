@@ -126,25 +126,15 @@ user e2e
 
     - 첫리뷰였던 A가 삭제진행이 완료되기 이전에 B 리뷰가 작성되면 B 리뷰는 추가점수가 없다.
 
-- 포토 하드딜리트!!
-- 리뷰 하드딜리트
-
-??
-
-- 리턴에 성공실패 ? vs 유저 포인트만
-
-- response dto 만들기
-
 ---
 
 남은 것
 
-- response dto
 - user e2e
-- review unit testing
+<!-- - review unit testing -->
 - db 점검
 - review e2e
-- user dto
+<!-- - user dto -->
 - seed 데이터 추가
 - 코드 리팩토링 (함수로 뺴기)
 - 엔티티나 디티오 겹치는것들 뺼 수 있음 빼기
@@ -161,3 +151,11 @@ user e2e
 이 부분을 조금더 신경써주신다면 견고한 프로젝트가 될 수 있을것 같습니다.
 
 https://velog.io/@dev_leewoooo/TypeORM-Transaction%EC%9D%84-Test%ED%95%98%EA%B8%B0-with-queryRunner
+
+logs : 타입
+
+---
+
+막날. 배포과정 정리
+서버실행 방법 정리
+설계 끝까지검토

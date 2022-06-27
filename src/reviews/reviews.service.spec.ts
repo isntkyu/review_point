@@ -9,6 +9,7 @@ import { Reviews } from './../entities/Reviews';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Repository, DataSource, QueryRunner } from 'typeorm';
 import { ReviewsService } from './reviews.service';
+import { UnauthorizedException } from '@nestjs/common';
 
 const mockReviewsRepository = () => ({
   findOne: jest.fn(),
@@ -146,7 +147,9 @@ describe('ReviewsService', () => {
         },
       });
 
-      expect(result).toEqual('이미 리뷰가 존재한다.');
+      expect(result).toEqual(
+        new UnauthorizedException('이미 리뷰가 존재합니다.'),
+      );
     });
 
     it('리뷰가 저장될 때 기본 +1 포인트', async () => {
@@ -212,18 +215,9 @@ describe('ReviewsService', () => {
 
       const result = await service.modReview(modReviewData);
 
-      expect(result).toEqual('없는 리뷰아이디');
-    });
-    it('새로운 내용과 새로운 사진들로 수정이 잘 되는가.', async () => {
-      // 유저 리턴이라 테스트가 안됨.
-      // reviewsRepository.findOneBy.mockResolvedValue(new Reviews());
-      // reviewsRepository.save.mockResolvedValue(modReviewData);
-      // reviewAttachedPhotosRepository.find.mockResolvedValue(['c', 'd', 'e']);
-      // reviewAttachedPhotosRepository.softRemove.mockResolvedValue([]);
-      // reviewAttachedPhotosRepository.insert.mockResolvedValue(['a', 'b']);
-      // userRepository.findOneBy.mockResolvedValue(new Users());
-      // const result = await service.modReview(modReviewData);
-      // expect(result).toEqual(modReviewData);
+      expect(result).toEqual(
+        new UnauthorizedException('존재하지 않는 reviewId 입니다.'),
+      );
     });
 
     it('사진이 있던 리뷰에 사진을 삭제하면 -1 포인트', async () => {
