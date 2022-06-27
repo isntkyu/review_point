@@ -5,15 +5,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Reviews } from '../entities/Reviews';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
-import { PlacesService } from 'src/places/places.service';
-import { Users } from 'src/entities/Users';
+import { ReviewCrudDto } from './dto/event-review.dto';
 
 @Injectable()
 export class ReviewsService {
-  private static readonly logger = new Logger(ReviewsService.name);
-
   constructor(
     @InjectRepository(Reviews)
     private reviewsRepository: Repository<Reviews>,
@@ -25,16 +20,14 @@ export class ReviewsService {
     private dataSource: DataSource,
   ) {}
 
-  //createReviewDto: CreateReviewDto
-  async addReview(eventRequestData) {
-    // const insertReview =
+  async addReview(reviewCrudDto: ReviewCrudDto) {
     // 1. placeId validation
     // 2. userId validation
     // 3. 이 유저가 이 장소에 이미 리뷰를 남겻는지 확인.
     const existReview = await this.reviewsRepository.findOne({
       where: {
-        userId: eventRequestData.userId,
-        placeId: eventRequestData.placeId,
+        userId: reviewCrudDto.userId,
+        placeId: reviewCrudDto.placeId,
       },
     });
 
@@ -46,19 +39,19 @@ export class ReviewsService {
     let point = 1;
     // 첫리뷰 체크
     const countPlaceReviews = await this.reviewsRepository.count({
-      where: { placeId: eventRequestData.placeId },
+      where: { placeId: reviewCrudDto.placeId },
     });
     if (countPlaceReviews === 0) {
       point += 1;
     }
     // 사진이 있는지 체크
     let insertPhotoIds = [];
-    if (eventRequestData.attachedPhotoIds.length > 0) {
+    if (reviewCrudDto.attachedPhotoIds.length > 0) {
       point += 1;
       // 있으면 insert할 배열 생성
-      insertPhotoIds = eventRequestData.attachedPhotoIds.map((id) => {
+      insertPhotoIds = reviewCrudDto.attachedPhotoIds.map((id) => {
         return {
-          reviewId: eventRequestData.reviewId,
+          reviewId: reviewCrudDto.reviewId,
           attachedPhotoId: id,
         };
       });
@@ -70,17 +63,17 @@ export class ReviewsService {
     await queryRunner.startTransaction();
     try {
       // 리뷰 insert
-      await this.reviewsRepository.insert(eventRequestData);
+      await this.reviewsRepository.insert(reviewCrudDto);
       // 사진 insert
       if (insertPhotoIds.length) {
         await this.reviewAttachedPhotosRepository.insert(insertPhotoIds);
       }
       // 포인트 업데이트
-      await this.usersService.updateUserPoint(eventRequestData.userId, point);
+      await this.usersService.updateUserPoint(reviewCrudDto.userId, point);
       // 로그
       const logs = {
-        userId: eventRequestData.userId,
-        reviewId: eventRequestData.reviewId,
+        userId: reviewCrudDto.userId,
+        reviewId: reviewCrudDto.reviewId,
         pointIncrease: point,
       };
       await this.reviewPointIncreaseLogsRepository.insert(logs);
@@ -90,7 +83,7 @@ export class ReviewsService {
       console.log(error);
       queryRunner.rollbackTransaction();
     } finally {
-      const user = await this.usersService.findOne(eventRequestData.userId);
+      const user = await this.usersService.findOne(reviewCrudDto.userId);
       await queryRunner.release();
       return user;
     }
@@ -98,10 +91,10 @@ export class ReviewsService {
     // 결과 포인트 리턴
   }
 
-  async modReview(eventRequestData) {
+  async modReview(reviewCrudDto: ReviewCrudDto) {
     // 1. 리뷰 찾기
     const review = await this.reviewsRepository.findOneBy({
-      reviewId: eventRequestData.reviewId,
+      reviewId: reviewCrudDto.reviewId,
     });
     if (!review) {
       // return error
@@ -111,21 +104,21 @@ export class ReviewsService {
     // join vs where
     // 사진 이 있엇는지
     const reviewPhotos = await this.reviewAttachedPhotosRepository.count({
-      where: { reviewId: eventRequestData.reviewId },
+      where: { reviewId: reviewCrudDto.reviewId },
     });
 
     let point = 0;
     let insertPhotoIds = [];
-    if (reviewPhotos === 0 && eventRequestData.attachedPhotoIds.length) {
+    if (reviewPhotos === 0 && reviewCrudDto.attachedPhotoIds.length) {
       point += 1;
-      insertPhotoIds = eventRequestData.attachedPhotoIds.map((id) => {
+      insertPhotoIds = reviewCrudDto.attachedPhotoIds.map((id) => {
         return {
-          reviewId: eventRequestData.reviewId,
+          reviewId: reviewCrudDto.reviewId,
           attachedPhotoId: id,
         };
       });
     }
-    if (reviewPhotos > 0 && !eventRequestData.attachedPhotoIds.length) {
+    if (reviewPhotos > 0 && !reviewCrudDto.attachedPhotoIds.length) {
       point -= 1;
     }
 
@@ -134,12 +127,12 @@ export class ReviewsService {
     await queryRunner.startTransaction();
     try {
       // 리뷰 내용 저장
-      review.content = eventRequestData.content;
+      review.content = reviewCrudDto.content;
       await this.reviewsRepository.save(review);
       // 사진 삭제
       const photos = await this.reviewAttachedPhotosRepository.find({
         where: {
-          reviewId: eventRequestData.reviewId,
+          reviewId: reviewCrudDto.reviewId,
         },
       });
       await this.reviewAttachedPhotosRepository.softRemove(photos);
@@ -149,12 +142,12 @@ export class ReviewsService {
       }
       // 포인트 업데이트
       if (point !== 0) {
-        await this.usersService.updateUserPoint(eventRequestData.userId, point);
+        await this.usersService.updateUserPoint(reviewCrudDto.userId, point);
       }
       // 이력 로그
       const logs = {
-        userId: eventRequestData.userId,
-        reviewId: eventRequestData.reviewId,
+        userId: reviewCrudDto.userId,
+        reviewId: reviewCrudDto.reviewId,
         pointIncrease: point,
       };
       await this.reviewPointIncreaseLogsRepository.insert(logs);
@@ -163,25 +156,25 @@ export class ReviewsService {
       console.log(error);
       queryRunner.rollbackTransaction();
     } finally {
-      const user = await this.usersService.findOne(eventRequestData.userId);
+      const user = await this.usersService.findOne(reviewCrudDto.userId);
       await queryRunner.release();
       return user;
     }
   }
 
-  async deleteReview(eventRequestData) {
+  async deleteReview(reviewCrudDto: ReviewCrudDto) {
     let point = -1;
-    // 사진있나
+    // 사진있었나
     const hasPhotos: Boolean =
       (await this.reviewAttachedPhotosRepository.find({
-        where: { reviewId: eventRequestData.reviewId },
+        where: { reviewId: reviewCrudDto.reviewId },
       })) !== null
         ? true
         : false;
     // 첫리뷰였나
     const isFirstReview: Boolean =
       (await this.reviewsRepository.count({
-        where: { placeId: eventRequestData.placeId },
+        where: { placeId: reviewCrudDto.placeId },
       })) === 1
         ? true
         : false;
@@ -194,19 +187,19 @@ export class ReviewsService {
     await queryRunner.startTransaction();
     try {
       // 리뷰 삭제
-      await this.reviewsRepository.softDelete(eventRequestData.reviewId);
+      await this.reviewsRepository.softDelete(reviewCrudDto.reviewId);
       // 사진 삭제
       const returned = await this.reviewAttachedPhotosRepository.find({
         where: {
-          reviewId: eventRequestData.reviewId,
+          reviewId: reviewCrudDto.reviewId,
         },
       });
       await this.reviewAttachedPhotosRepository.softRemove(returned);
       // 포인트 업뎃
-      await this.usersService.updateUserPoint(eventRequestData.userId, point);
+      await this.usersService.updateUserPoint(reviewCrudDto.userId, point);
       const logs = {
-        userId: eventRequestData.userId,
-        reviewId: eventRequestData.reviewId,
+        userId: reviewCrudDto.userId,
+        reviewId: reviewCrudDto.reviewId,
         pointIncrease: point,
       };
       await this.reviewPointIncreaseLogsRepository.insert(logs);
@@ -215,7 +208,7 @@ export class ReviewsService {
       console.log(error);
       queryRunner.rollbackTransaction();
     } finally {
-      const user = await this.usersService.findOne(eventRequestData.userId);
+      const user = await this.usersService.findOne(reviewCrudDto.userId);
       await queryRunner.release();
       return user;
     }

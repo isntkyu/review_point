@@ -1,21 +1,18 @@
 import { ReviewsController } from './reviews/reviews.controller';
-import { Body, Controller, Get, NotFoundException, Post } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Body, Controller, NotFoundException, Post } from '@nestjs/common';
+import { PostEventDto } from './common/dto/post.event.dto';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly reviewsController: ReviewsController,
-  ) {}
+  constructor(private readonly reviewsController: ReviewsController) {}
 
   @Post('/events')
-  async event(@Body() eventRequstData) {
-    const domain = eventRequstData.type;
+  async event(@Body() eventRequestData: PostEventDto) {
+    const domain = eventRequestData.type;
     console.log(domain);
     switch (domain) {
       case 'REVIEW':
-        return await this.reviewsController.postReview(eventRequstData);
+        return await this.reviewsController.postReview(eventRequestData);
       default:
         throw new NotFoundException();
     }

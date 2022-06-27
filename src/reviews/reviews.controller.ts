@@ -1,30 +1,20 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  BadRequestException,
-} from '@nestjs/common';
+import { Controller, BadRequestException } from '@nestjs/common';
+import { PostEventDto } from 'src/common/dto/post.event.dto';
 import { ReviewsService } from './reviews.service';
-import { CreateReviewDto } from './dto/create-review.dto';
-import { UpdateReviewDto } from './dto/update-review.dto';
 
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
-  async postReview(eventRequestData) {
-    const requestMethod = eventRequestData.action;
+  async postReview(postEventDto: PostEventDto) {
+    const requestMethod = postEventDto.action;
     switch (requestMethod) {
       case 'ADD':
-        return await this.reviewsService.addReview(eventRequestData);
+        return await this.reviewsService.addReview(postEventDto);
       case 'MOD':
-        return await this.reviewsService.modReview(eventRequestData);
+        return await this.reviewsService.modReview(postEventDto);
       case 'DELETE':
-        return await this.reviewsService.deleteReview(eventRequestData);
+        return await this.reviewsService.deleteReview(postEventDto);
       default:
         throw new BadRequestException();
     }
