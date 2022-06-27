@@ -1,5 +1,5 @@
 import { Controller, BadRequestException } from '@nestjs/common';
-import { PostEventDto } from 'src/common/dto/post.event.dto';
+import { PostEventDto } from '../common/dto/post.event.dto';
 import { ReviewsService } from './reviews.service';
 
 @Controller('reviews')

@@ -1,4 +1,3 @@
-import { Users } from 'src/entities/Users';
 import { UsersModule } from './users/users.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';

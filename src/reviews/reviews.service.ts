@@ -32,7 +32,6 @@ export class ReviewsService {
     });
 
     if (existReview) {
-      console.log(existReview);
       return '이미 리뷰가 존재한다.';
     }
     // 4. 포인트 계산

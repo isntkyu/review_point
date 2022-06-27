@@ -6,8 +6,7 @@ import { ReviewsService } from './reviews.service';
 import { ReviewsController } from './reviews.controller';
 import { Reviews } from '../entities/Reviews';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersService } from 'src/users/users.service';
-import { PlacesModule } from 'src/places/places.module';
+import { PlacesModule } from '../places/places.module';
 
 @Module({
   imports: [

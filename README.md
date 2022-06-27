@@ -134,3 +134,30 @@ user e2e
 - 리턴에 성공실패 ? vs 유저 포인트만
 
 - response dto 만들기
+
+---
+
+남은 것
+
+- response dto
+- user e2e
+- review unit testing
+- db 점검
+- review e2e
+- user dto
+- seed 데이터 추가
+- 코드 리팩토링 (함수로 뺴기)
+- 엔티티나 디티오 겹치는것들 뺼 수 있음 빼기
+- 함수 리턴값, 객체 다루기, 타입스크립트 리팩토링 (enhancinglanguage)
+- 전체 테스트
+- **8.  서비스 운영을 고려한 예외처리와 로그가 있으면 견고한 프로젝트가 될 수 있을것 같습니다.**
+
+현재 과제에서는 try catch를 비롯해 에러로그 등이 잘 다뤄지진 않는데요.
+
+어떤 부분에서 로그를 남길지,
+
+로그를 남긴다면 **어떤 파라미터, 어떤 가공된 값을 사용했더니 어떤 함수에서 에러가 발생했다**를 상세하게 남긴다면 실제 운영 환경에서 많은 문제를 쉽게 해결할 수 있습니다.
+
+이 부분을 조금더 신경써주신다면 견고한 프로젝트가 될 수 있을것 같습니다.
+
+https://velog.io/@dev_leewoooo/TypeORM-Transaction%EC%9D%84-Test%ED%95%98%EA%B8%B0-with-queryRunner

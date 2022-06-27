@@ -82,10 +82,6 @@ describe('UsersService', () => {
     const incrementArgs = { userId: '3ede0ef2-92b7-4817-a5f3-0c575361f745' };
     const pointAdd = 10;
     const pointSub = -10;
-    const beforeUser = {
-      userId: '3ede0ef2-92b7-4817-a5f3-0c575361f745',
-      point: 12,
-    };
     it('should be update ADD Point user', async () => {
       const afterAddUser = {
         userId: '3ede0ef2-92b7-4817-a5f3-0c575361f745',
