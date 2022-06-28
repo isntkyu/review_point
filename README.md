@@ -52,6 +52,22 @@
 
 ---
 
+## API
+
+- 포인트 조회 API (GET)
+
+  - 유저 테이블에 유저마다 갖는 포인트를 기록하게 설계했기 때문에 포인트는 유저 조회를 통해 확인하도록 했습니다.
+  - /users : 전체 유저 조회
+  - /users/:userId : 한 유저 조회
+
+- /events (POST)
+
+  - type 값을 domain 으로 이해하고 없는 도메인 값으로 요청시 Not Found.
+  - action 값으로 정의되지 않은 값이 오면 BadRequest.
+  - reviews.controller 에서 ADD, MOD, DELETE 분기했습니다.
+
+---
+
 ## 테이블
 
 - places
@@ -156,21 +172,3 @@ ADD
 ```
 
 ---
-
-- 404 처리 인터셉터
-
-- create, update, delete 픽타입 중복
-
-- logger
-
-- user e2e
-<!-- - review unit testing -->
-- db 점검
-- review e2e
-<!-- - user dto -->
-- 코드 리팩토링 (함수로 뺴기)
-- 엔티티나 디티오 겹치는것들 뺼 수 있음 빼기
-- 함수 리턴값, 객체 다루기, 타입스크립트 리팩토링 (enhancinglanguage)
-- 전체 테스트
-- 로그를 남긴다면 **어떤 파라미터, 어떤 가공된 값을 사용했더니 어떤 함수에서 에러가 발생했다**
-- logs : 타입
