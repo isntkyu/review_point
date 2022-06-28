@@ -39,6 +39,7 @@ export class UsersService {
       return result;
     } catch (error) {
       if (error.code === 'ER_DATA_OUT_OF_RANGE') {
+        await this.usersRepository.update(userId, { point: 0 });
         return new Error('point cannot be negative');
       }
       return error;

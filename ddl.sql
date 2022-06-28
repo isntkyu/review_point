@@ -13,6 +13,7 @@ CREATE TABLE `reviewpointincreaselogs` (
   `review_id` varchar(36) NOT NULL,
   `user_id` varchar(36) NOT NULL,
   `point_increase` int NOT NULL,
+  `get_first_review_point` tinyint NOT NULL DEFAULT false,
   `deleted_at` datetime(6) NULL,
   `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
@@ -47,7 +48,7 @@ CREATE TABLE `reviews` (
 CREATE TABLE `reviewattachedphotos` (
   `review_id` varchar(36) NOT NULL,
   `attached_photo_id` varchar(36) NOT NULL,
-  `deleted_at` datetime(6) NULL,
+  -- `deleted_at` datetime(6) NULL,
   `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   INDEX `review_id` (`review_id`),

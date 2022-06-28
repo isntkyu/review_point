@@ -22,6 +22,7 @@ const mockReviewsRepository = () => ({
 
 const mockReviewsPointIncreaseLogsRepository = () => ({
   insert: jest.fn(),
+  findOne: jest.fn(),
 });
 
 const mockReviewsAttachedPhotosRepository = () => ({
@@ -99,16 +100,24 @@ describe('ReviewsService', () => {
 
     service = module.get<ReviewsService>(ReviewsService);
     usersService = module.get<UsersService>(UsersService);
+
     reviewsRepository = module.get<MockRepository<Reviews>>(
       getRepositoryToken(Reviews),
     );
+
     reviewAttachedPhotosRepository = module.get<
       MockRepository<Reviewattachedphotos>
     >(getRepositoryToken(Reviewattachedphotos));
+
     userRepository = module.get<MockRepository<Users>>(
       getRepositoryToken(Users),
     );
+
     datasource = module.get<DataSource>(DataSource);
+
+    reviewPointIncreaseLogsRepository = module.get<
+      MockRepository<Reviewpointincreaselogs>
+    >(getRepositoryToken(Reviewpointincreaselogs));
   });
 
   it('should be defined', () => {
@@ -279,6 +288,7 @@ describe('ReviewsService', () => {
       };
       reviewsRepository.findOneBy.mockResolvedValue(deleteReviewData);
       reviewAttachedPhotosRepository.find.mockResolvedValue(null);
+      reviewPointIncreaseLogsRepository.findOne.mockResolvedValue(null);
       reviewsRepository.count(50);
       userRepository.increment.mockResolvedValue(beforeUser);
       userRepository.findOneBy.mockResolvedValue(afterUser);
@@ -295,6 +305,7 @@ describe('ReviewsService', () => {
       };
       reviewsRepository.findOneBy.mockResolvedValue(deleteReviewData);
       reviewAttachedPhotosRepository.find.mockResolvedValue(!null);
+      reviewPointIncreaseLogsRepository.findOne.mockResolvedValue(null);
       reviewsRepository.count(50);
       userRepository.increment.mockResolvedValue(beforeUser);
       userRepository.findOneBy.mockResolvedValue(afterUser);
@@ -311,6 +322,7 @@ describe('ReviewsService', () => {
       };
       reviewsRepository.findOneBy.mockResolvedValue(deleteReviewData);
       reviewAttachedPhotosRepository.find.mockResolvedValue(!null);
+      reviewPointIncreaseLogsRepository.findOne.mockResolvedValue(!null);
       reviewsRepository.count(1);
       userRepository.increment.mockResolvedValue(beforeUser);
       userRepository.findOneBy.mockResolvedValue(afterUser);

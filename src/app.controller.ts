@@ -9,7 +9,6 @@ export class AppController {
   @Post('/events')
   async event(@Body() eventRequestData: PostEventDto) {
     const domain = eventRequestData.type;
-    console.log(domain);
     switch (domain) {
       case 'REVIEW':
         return await this.reviewsController.postReview(eventRequestData);

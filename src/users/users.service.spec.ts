@@ -11,6 +11,7 @@ const mockUsersRepository = () => ({
   findOneBy: jest.fn(),
   softDelete: jest.fn(),
   increment: jest.fn(),
+  update: jest.fn(),
 });
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
@@ -151,6 +152,7 @@ describe('UsersService', () => {
     });
 
     it('포인트가 0 미만 일 수는 없다.', async () => {
+      // userRepository.update.mockResolvedValue(incrementArgs);
       userRepository.increment.mockRejectedValue({
         code: 'ER_DATA_OUT_OF_RANGE',
       });

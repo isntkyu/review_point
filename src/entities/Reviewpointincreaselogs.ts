@@ -23,6 +23,9 @@ export class Reviewpointincreaselogs {
   @Column('int', { name: 'point_increase' })
   pointIncrease: number;
 
+  @Column('bool', { name: 'get_first_review_point', default: () => false })
+  getFirstReviewPoint: Boolean;
+
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date | null;
 
