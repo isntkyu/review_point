@@ -10,6 +10,10 @@ export class UsersService {
     private usersRepository: Repository<Users>,
   ) {}
 
+  async findAll(): Promise<Users[]> {
+    return await this.usersRepository.find();
+  }
+
   async findOne(userId: string): Promise<Users> {
     try {
       const user = await this.usersRepository.findOneBy({ userId: userId });

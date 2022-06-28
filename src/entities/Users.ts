@@ -4,8 +4,10 @@ import {
   DeleteDateColumn,
   UpdateDateColumn,
   Entity,
+  Index,
 } from 'typeorm';
 
+@Index('user_id', ['userId'], {})
 @Entity('users', { schema: 'triple_homework' })
 export class Users {
   @Column('varchar', { primary: true, name: 'user_id', length: 36 })

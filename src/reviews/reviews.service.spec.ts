@@ -277,6 +277,7 @@ describe('ReviewsService', () => {
         userId: '3ede0ef2-92b7-4817-a5f3-0c575361f745',
         point: 9,
       };
+      reviewsRepository.findOneBy.mockResolvedValue(deleteReviewData);
       reviewAttachedPhotosRepository.find.mockResolvedValue(null);
       reviewsRepository.count(50);
       userRepository.increment.mockResolvedValue(beforeUser);
@@ -292,6 +293,7 @@ describe('ReviewsService', () => {
         userId: '3ede0ef2-92b7-4817-a5f3-0c575361f745',
         point: 8,
       };
+      reviewsRepository.findOneBy.mockResolvedValue(deleteReviewData);
       reviewAttachedPhotosRepository.find.mockResolvedValue(!null);
       reviewsRepository.count(50);
       userRepository.increment.mockResolvedValue(beforeUser);
@@ -307,6 +309,7 @@ describe('ReviewsService', () => {
         userId: '3ede0ef2-92b7-4817-a5f3-0c575361f745',
         point: 7,
       };
+      reviewsRepository.findOneBy.mockResolvedValue(deleteReviewData);
       reviewAttachedPhotosRepository.find.mockResolvedValue(!null);
       reviewsRepository.count(1);
       userRepository.increment.mockResolvedValue(beforeUser);

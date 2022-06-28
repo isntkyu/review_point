@@ -42,6 +42,16 @@ export class ReviewsService {
     return insertPhotoIds;
   }
 
+  private async checkExistAndFindReview(reviewCrudDto: ReviewCrudDto) {
+    const review = await this.reviewsRepository.findOneBy({
+      reviewId: reviewCrudDto.reviewId,
+    });
+    if (!review) {
+      throw new UnauthorizedException('존재하지 않는 reviewId 입니다.');
+    }
+    return review;
+  }
+
   async addReview(reviewCrudDto: ReviewCrudDto): Promise<Users> {
     try {
       // 이 유저가 이 장소에 이미 리뷰를 남겻는지 확인.
@@ -65,7 +75,7 @@ export class ReviewsService {
         point += 1;
       }
 
-      let insertPhotoIds: Object[];
+      let insertPhotoIds = [];
       if (reviewCrudDto.attachedPhotoIds.length > 0) {
         point += 1;
         insertPhotoIds = this.mappingInsertArr(insertPhotoIds, reviewCrudDto);
@@ -108,19 +118,14 @@ export class ReviewsService {
   async modReview(reviewCrudDto: ReviewCrudDto): Promise<Users> {
     try {
       //  리뷰 찾기
-      const review = await this.reviewsRepository.findOneBy({
-        reviewId: reviewCrudDto.reviewId,
-      });
-      if (!review) {
-        throw new UnauthorizedException('존재하지 않는 reviewId 입니다.');
-      }
+      const review = await this.checkExistAndFindReview(reviewCrudDto);
 
       const reviewPhotos = await this.reviewAttachedPhotosRepository.count({
         where: { reviewId: reviewCrudDto.reviewId },
       });
 
       let point = 0;
-      let insertPhotoIds: Object[];
+      let insertPhotoIds = [];
       if (reviewPhotos === 0 && reviewCrudDto.attachedPhotoIds.length) {
         point += 1;
         insertPhotoIds = this.mappingInsertArr(insertPhotoIds, reviewCrudDto);
@@ -172,49 +177,55 @@ export class ReviewsService {
   }
 
   async deleteReview(reviewCrudDto: ReviewCrudDto): Promise<Users> {
-    let point = -1;
-
-    const hasPhotos: Boolean =
-      (await this.reviewAttachedPhotosRepository.find({
-        where: { reviewId: reviewCrudDto.reviewId },
-      })) !== null
-        ? true
-        : false;
-
-    const isFirstReview: Boolean =
-      (await this.isFirstReviewCheckByCount(reviewCrudDto)) === 1
-        ? true
-        : false;
-
-    if (hasPhotos) point -= 1;
-    if (isFirstReview) point -= 1;
-
-    const queryRunner = this.dataSource.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
     try {
-      await this.reviewsRepository.softDelete(reviewCrudDto.reviewId);
-      const returned = await this.reviewAttachedPhotosRepository.find({
-        where: {
+      await this.checkExistAndFindReview(reviewCrudDto);
+
+      let point = -1;
+
+      const hasPhotos: Boolean =
+        (await this.reviewAttachedPhotosRepository.find({
+          where: { reviewId: reviewCrudDto.reviewId },
+        })) !== null
+          ? true
+          : false;
+
+      const isFirstReview: Boolean =
+        (await this.isFirstReviewCheckByCount(reviewCrudDto)) === 1
+          ? true
+          : false;
+
+      if (hasPhotos) point -= 1;
+      if (isFirstReview) point -= 1;
+
+      const queryRunner = this.dataSource.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      try {
+        await this.reviewsRepository.softDelete(reviewCrudDto.reviewId);
+        const returned = await this.reviewAttachedPhotosRepository.find({
+          where: {
+            reviewId: reviewCrudDto.reviewId,
+          },
+        });
+        await this.reviewAttachedPhotosRepository.softRemove(returned);
+        await this.usersService.updateUserPoint(reviewCrudDto.userId, point);
+        const logs = {
+          userId: reviewCrudDto.userId,
           reviewId: reviewCrudDto.reviewId,
-        },
-      });
-      await this.reviewAttachedPhotosRepository.softRemove(returned);
-      await this.usersService.updateUserPoint(reviewCrudDto.userId, point);
-      const logs = {
-        userId: reviewCrudDto.userId,
-        reviewId: reviewCrudDto.reviewId,
-        pointIncrease: point,
-      };
-      await this.reviewPointIncreaseLogsRepository.insert(logs);
-      await queryRunner.commitTransaction();
+          pointIncrease: point,
+        };
+        await this.reviewPointIncreaseLogsRepository.insert(logs);
+        await queryRunner.commitTransaction();
+      } catch (error) {
+        console.log(error);
+        queryRunner.rollbackTransaction();
+      } finally {
+        const user = await this.usersService.findOne(reviewCrudDto.userId);
+        await queryRunner.release();
+        return user;
+      }
     } catch (error) {
-      console.log(error);
-      queryRunner.rollbackTransaction();
-    } finally {
-      const user = await this.usersService.findOne(reviewCrudDto.userId);
-      await queryRunner.release();
-      return user;
+      return error;
     }
   }
 }

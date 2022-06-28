@@ -1,62 +1,128 @@
-# review_point
+## 실행 밥법
 
-create table Reviews (
-review_id varchar(36) not null,
-content text not null,
-user_id varchar(36) not null,
-place_id varchar(36) not null,
-deleted_at DATETIME default null,
-created_at DATETIME default current_timestamp() not null,
-updated_at DATETIME default current_timestamp() not null,
-index (place_id),
-primary key (review_id)
-);
+- 개발에 사용된 버전
 
-create table ReviewAttachedPhotos (
-id int unsigned not null auto_increment,
-review_id varchar(36) not null,
-attached_photo_id varchar(36) not null,
-deleted_at DATETIME default null,
-created_at DATETIME default current_timestamp() not null,
-updated_at DATETIME default current_timestamp() not null,
-index (review_id),
-foreign key (review_id) references Reviews(review_id) on delete cascade,
-primary key (id)
-);
+  - node: v16.14.0
+  - npm: 8.3.1
 
-create table Users (
-user_id varchar(36) not null,
-point int unsigned default 0,
-deleted_at DATETIME default null,
-created_at DATETIME default current_timestamp() not null,
-updated_at DATETIME default current_timestamp() not null,
-primary key (user_id)
-);
+- database 생성
 
-create table ReviewPointIncreaseLogs (
-review_id varchar(36) not null,
-user_id varchar(36) not null,
-point_increase int not null,
-deleted_at DATETIME default null,
-created_at DATETIME default current_timestamp() not null,
-updated_at DATETIME default current_timestamp() not null,
-index (user_id)
-primary key (review_id)
-);
+  - 접속할 데이터베이스 서버에 CREATE DATABASE `database명`; 을 실행해주세요
+
+- .env 파일 작성
+
+  - .env 파일에 연결할 DB 의 정보(host, port, password, database명)와 애플리케이션을 띄울 포트 번호(default 3000)를 입력해주세요.
+
+- npm install
+
+- 실행.
+
+  - npm run start (npm run start:dev)
+
+- 테이블 생성
+
+  - typeorm의 synchronize: true 옵션을 통해 서버시작시 데이터베이스에 테이블이 생성됩니다. (/src/entities)
+
+- npm run seed:run
+  - places (장소) 테이블과 users (사용자) 테이블에 기본 데이터를 insert 하도록 했습니다.
+  - 각 3개의 데이터가 들어가게 됩니다.
+
+```js
+[
+  { userId: '3ede0ef2-92b7-4817-a5f3-0c575361f745' },
+  { userId: '92b7-4817-a5f3-0c575361f745-3ede0ef2' },
+  { userId: '3ede0ef2-92b7-4817-a5f3-0c575361f777' },
+],
+  [
+    { placeId: '2e4baf1c-5acb-4efb-a1af-eddada31b00f', name: 'suwon' },
+    { placeId: '2e4baf1c-5acb-4efb-a1af-eddada31b00a', name: 'seoul' },
+    { placeId: '2e4baf1c-5acb-4efb-a1af-eddada31b00b', name: 'busan' },
+  ];
+```
 
 ---
 
-EATE TABLE `users` (`user_id` varchar(36) NOT NULL, `point` int UNSIGNED NULL DEFAULT '0', `deleted_at` datetime(6) NULL, `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), PRIMARY KEY (`user_id`)) ENGINE=InnoDB
-query: CREATE TABLE `reviewpointincreaselogs` (`id` int UNSIGNED NOT NULL AUTO_INCREMENT, `review_id` varchar(36) NOT NULL, `user_id` varchar(36) NOT NULL, `point_increase` int NOT NULL, `deleted_at` datetime(6) NULL, `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), INDEX `user_id` (`user_id`), PRIMARY KEY (`id`)) ENGINE=InnoDB
-query: CREATE TABLE `reviews` (`review_id` varchar(36) NOT NULL, `content` text NOT NULL, `user_id` varchar(36) NOT NULL, `place_id` varchar(36) NOT NULL, `deleted_at` datetime(6) NULL, `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6), INDEX `place_id` (`place_id`), PRIMARY KEY (`review_id`)) ENGINE=InnoDB
-query: CREATE TABLE `reviewattachedphotos` (`review_id` varchar(36) NOT NULL, `attached_photo_id` varchar(36) NOT NULL, `deleted_at` datetime(6) NULL, `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), INDEX `review_id` (`review_id`), PRIMARY KEY (`attached_photo_id`)) ENGINE=InnoDB
-query: ALTER TABLE `reviewattachedphotos` ADD CONSTRAINT `FK_6387d4b514101481136345dafbc` FOREIGN KEY (`review_id`) REFERENCES `reviews`(`review_id`) ON DELETE CASCADE ON UPDATE NO ACTION
+## 테스트
+
+- npm run test
+  - reviews.service.spec.ts
+  - users.service.spec.ts
+- npm run test:e2e
+  - app.e2e.spec.ts 파일의 테스트
 
 ---
 
-타입오알엠엔 매니투매니 버그가 좀 잇음
+## DDL
 
-synchronize: true, // 코드 -> 디비로 싱크
+- ddl.sql 파일
+
+```sql
+CREATE TABLE `users` (
+  `user_id` varchar(36) NOT NULL,
+  `point` int UNSIGNED NULL DEFAULT '0',
+  `deleted_at` datetime(6) NULL,
+  `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  INDEX `user_id` (`user_id`),
+  PRIMARY KEY (`user_id`)
+);
+
+CREATE TABLE `reviewpointincreaselogs` (
+  `id` int UNSIGNED NOT NULL AUTO_INCREMENT,
+  `review_id` varchar(36) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `point_increase` int NOT NULL,
+  `deleted_at` datetime(6) NULL,
+  `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  INDEX `user_id` (`user_id`),
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `places` (
+  `place_id` varchar(36) NOT NULL,
+  `name` text NOT NULL,
+  `deleted_at` datetime(6) NULL,
+  `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  INDEX `place_id` (`place_id`),
+  PRIMARY KEY (`place_id`)
+);
+
+CREATE TABLE `reviews` (
+  `review_id` varchar(36) NOT NULL,
+  `content` text NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `place_id` varchar(36) NOT NULL,
+  `deleted_at` datetime(6) NULL,
+  `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  INDEX `place_id` (`place_id`),
+  INDEX `user_id` (`user_id`),
+  INDEX `review_id` (`review_id`),
+  PRIMARY KEY (`review_id`)
+);
+
+CREATE TABLE `reviewattachedphotos` (
+  `review_id` varchar(36) NOT NULL,
+  `attached_photo_id` varchar(36) NOT NULL,
+  `deleted_at` datetime(6) NULL,
+  `created_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+  `updated_at` datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+  INDEX `review_id` (`review_id`),
+  PRIMARY KEY (`attached_photo_id`)
+);
+
+ALTER TABLE
+  `reviews`
+ADD
+  CONSTRAINT `FK_d2616b72cb3787ad20b88a3aa67` FOREIGN KEY (`place_id`) REFERENCES `places`(`place_id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+ALTER TABLE
+  `reviewattachedphotos`
+ADD
+  CONSTRAINT `FK_6387d4b514101481136345dafbc` FOREIGN KEY (`review_id`) REFERENCES `reviews`(`review_id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+```
 
 ---
 
@@ -159,3 +225,5 @@ logs : 타입
 막날. 배포과정 정리
 서버실행 방법 정리
 설계 끝까지검토
+
+포토아이디가 절대 겹칠수 없다는 가정.

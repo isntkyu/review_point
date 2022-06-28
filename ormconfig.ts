@@ -21,9 +21,9 @@ const config: TypeOrmModuleOptions = {
     Reviewpointincreaselogs,
     Places,
   ],
-  synchronize: false, // 코드 -> 디비로 싱크
-  logging: true, // 개발시
-  keepConnectionAlive: true, // 서버 재시작시 커넥션 안끊김
+  synchronize: true,
+  logging: true,
+  keepConnectionAlive: true,
 };
 
 export = config;

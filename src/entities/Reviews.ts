@@ -13,6 +13,8 @@ import { Reviewattachedphotos } from './Reviewattachedphotos';
 import { Places } from './Places';
 
 @Index('place_id', ['placeId'], {})
+@Index('user_id', ['userId'], {})
+@Index('review_id', ['reviewId'], {})
 @Entity('reviews', { schema: 'triple_homework' })
 export class Reviews {
   @Column('varchar', { primary: true, name: 'review_id', length: 36 })
