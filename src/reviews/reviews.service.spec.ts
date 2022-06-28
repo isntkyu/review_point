@@ -319,5 +319,15 @@ describe('ReviewsService', () => {
 
       expect(result).toEqual(afterUser);
     });
+
+    it('없는 리뷰ID 로 요청했을 때', async () => {
+      reviewsRepository.findOneBy.mockResolvedValue(null);
+
+      const result = await service.deleteReview(deleteReviewData);
+
+      expect(result).toEqual(
+        new UnauthorizedException('존재하지 않는 reviewId 입니다.'),
+      );
+    });
   });
 });
